@@ -27,7 +27,7 @@ jobs:
         working-directory: ./Backend
 
       - name: Run SonarCloud analysis
-        run: mvn -B verify sonar:sonar -Dsonar.projectKey=yann6182 -Dsonar.organization=yann6182 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=yann6182_tp-docker -Dsonar.organization=yann6182 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         working-directory: ./Backend
 
   # define job to build and publish docker image
