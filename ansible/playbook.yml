@@ -1,0 +1,111 @@
+- hosts: all
+  gather_facts: true
+  become: true
+
+  collections:
+    - community.docker
+
+  roles:
+    - docker
+    - network
+    - database
+    - backend
+    - proxy
+
+  vars:
+    # Network
+    app_network: app-net
+    
+    # Database
+    db_image: "{{ dockerhub_username }}/tp-devops-database:latest"
+    db_name: db
+    db_user: postgres
+    db_password: postgres
+    db_volume: /var/lib/postgresql/data
+    db_container_name: my-db
+    
+    # Backend
+    backend_image: "{{ dockerhub_username }}/tp-devops-simple-api:latest"
+    backend_container_name: backend
+    
+    # Proxy/HTTPD
+    httpd_image: "{{ dockerhub_username }}/tp-devops-httpd:latest"
+    httpd_container_name: http-server
+    http_port: "80:80"
+    
+    dockerhub_username: yannick6182
+    
+    # Volumes
+    volumes:
+      pgdata: {}
+    docker_repo_line: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+
+  tasks:
+    - name: Install prerequisites
+    # python3-venv peut manquer sur certaines images
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - python3
+          - python3-pip
+          - python3-venv
+        state: latest
+        update_cache: yes
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Add Docker apt repository
+      apt_repository:
+        repo: "{{ docker_repo_line }}"
+        state: present
+        filename: docker
+        update_cache: yes
+
+    - name: Install Docker CE + CLI + containerd
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: yes
+      notify: Restart docker
+
+    - name: Ensure docker group exists
+      group:
+        name: docker
+        state: present
+
+    - name: Add {{ ansible_user }} to docker group (sans sudo pour docker)
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+      when: ansible_user is defined
+
+    - name: Create virtualenv for Docker SDK (optionnel)
+      command: python3 -m venv /opt/docker_venv
+      args:
+        creates: /opt/docker_venv
+
+    - name: Install Docker SDK for Python in venv (optionnel)
+      command: /opt/docker_venv/bin/pip install --upgrade pip docker
+
+    - name: Ensure Docker service is enabled and running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Restart docker
+      service:
+        name: docker
+        state: restarted

@@ -1,0 +1,7 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/network
+- name: Ensure app network exists
+  community.docker.docker_network:
+    name: "{{ app_network }}"
+    state: present

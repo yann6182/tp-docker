@@ -1,0 +1,15 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/backend
+- name: Run backend container
+  community.docker.docker_container:
+    name: backend
+    image: "{{ backend_image }}"
+    restart_policy: always
+    env:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/{{ db_name }}"
+      SPRING_DATASOURCE_USERNAME: "{{ db_user }}"
+      SPRING_DATASOURCE_PASSWORD: "{{ db_password }}"
+    networks:
+      - name: "{{ app_network }}"
+
