@@ -6,4 +6,4 @@ all:
 
   hosts:
     prod:
-      ansible_host: ${{ secrets.SERVER_HOST }}
+      ansible_host: yannick.tiendjeungaleu.takima.cloud
