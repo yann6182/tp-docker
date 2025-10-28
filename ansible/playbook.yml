@@ -10,6 +10,7 @@
     - network
     - database
     - backend
+    - frontend
     - proxy
 
   vars:
@@ -27,6 +28,10 @@
     # Backend
     backend_image: "{{ dockerhub_username }}/tp-devops-simple-api:latest"
     backend_container_name: backend
+    
+    # Frontend
+    frontend_image: "{{ dockerhub_username }}/tp-devops-frontend:latest"
+    frontend_container_name: frontend
     
     # Proxy/HTTPD
     httpd_image: "{{ dockerhub_username }}/tp-devops-httpd:latest"

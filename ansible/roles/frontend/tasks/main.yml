@@ -1,0 +1,11 @@
+#SPDX-License-Identifier: MIT-0
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/frontend
+- name: Run frontend container
+  community.docker.docker_container:
+    name: frontend
+    image: "{{ frontend_image }}"
+    restart_policy: always
+    networks:
+      - name: "{{ app_network }}"
