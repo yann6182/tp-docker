@@ -9,7 +9,6 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn package -DskipTests
 
-# Run stage
 FROM eclipse-temurin:21-jre-alpine
 ENV MYAPP_HOME=/opt/myapp
 WORKDIR $MYAPP_HOME
