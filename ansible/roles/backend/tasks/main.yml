@@ -1,6 +1,5 @@
 #SPDX-License-Identifier: MIT-0
 ---
-# tasks file for roles/backend
 - name: Run backend container
   community.docker.docker_container:
     name: backend
